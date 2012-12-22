@@ -2,19 +2,38 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Web;
 
 public class Db_General
 {
+
+    internal static DbProviderFactory getFactory(string connectionName = "ezesb")
+    {
+        var connectionString = ConfigurationManager.ConnectionStrings[connectionName];
+        return DbProviderFactories.GetFactory(connectionString.ProviderName);
+    }
+
+    internal static DbConnection getConnection(string connectionName="ezesb")
+    {
+
+        var connectionString = ConfigurationManager.ConnectionStrings[connectionName];
+        DbConnection dbConn = DbProviderFactories.GetFactory(connectionString.ProviderName).CreateConnection();
+        dbConn.ConnectionString = connectionString.ConnectionString;
+
+        return dbConn;
+    }
+
+
     protected static DataTable getDataTable(string qry)
     {
 
         var dt = new DataTable();
 
-        using (var con = new MySql.Data.MySqlClient.MySqlConnection(ConfigurationManager.ConnectionStrings["ezesb"].ConnectionString))
+        using (var con = getConnection())
         {
-            var da = new MySql.Data.MySqlClient.MySqlDataAdapter();
+            var da = getFactory().CreateDataAdapter();
 
             da.SelectCommand = con.CreateCommand();
             da.SelectCommand.CommandText = qry;
@@ -50,11 +69,14 @@ public class Db_General
 
     protected static int Execute(string qry)
     {
-        using (var con = new MySql.Data.MySqlClient.MySqlConnection(ConfigurationManager.ConnectionStrings["ezesb"].ConnectionString))
+
+        using (DbConnection con = getConnection())
         {
-            con.Open();
-            var cmd = new MySql.Data.MySqlClient.MySqlCommand(qry, con);
+            DbCommand cmd = con.CreateCommand();
+            cmd.CommandText = qry;
+
             QueryTrace(qry);
+            con.Open();
             try
             {
                 return cmd.ExecuteNonQuery();
