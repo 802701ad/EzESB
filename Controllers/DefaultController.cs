@@ -18,6 +18,7 @@ namespace EzESB.Controllers
 
         public ActionResult Run()
         {
+            ESB_Main.RunEvents();
             return Content("");
         }
 

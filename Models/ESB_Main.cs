@@ -64,17 +64,17 @@ public class ESB_Main
                 t.tag = consumer_id;
                 
                 //if the current consumer isn't busy, process all the events in this group
-                if (ThreadPool.GetByTag(consumer_id) == null)
-                {
+                //if (ThreadPool.GetByTag(consumer_id) == null)
+                //{
 
                     t.thread = new Thread(() => TryCallConsumer(consumer_id, message_id, values));
                             ThreadPool.Items.Add(t);
                             t.thread.Start();
-                }
-                else
-                {
+                //}
+                //else
+                //{
                     //if thread for this consumer is busy end; it will be handled later
-                }
+                //}
 
 
             }
