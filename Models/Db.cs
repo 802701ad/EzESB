@@ -23,7 +23,7 @@ public class db : Db_General
 				    SELECT *
 				    FROM t_message_delivery_log dl
 				    WHERE c.consumer_id = dl.consumer_id
-                    AND m.message_id = dl.message_id
+                          AND m.message_id = dl.message_id
 			    )
             UNION ALL
             SELECT *
@@ -35,6 +35,7 @@ public class db : Db_General
 				    SELECT *
 				    FROM t_message_delivery_log dl
 				    WHERE c.consumer_id = dl.consumer_id
+					      AND m.message_id = dl.message_id
                     AND next_retry < '#sysdate#'
 			    )
 		    ORDER BY sent_at, message_id, consumer_id
